@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import rospy
+import rclpy
+from rclpy.node import Node
 from std_msgs.msg import String
 from sensor_msgs.msg import JointState
 
-class MainPlanningNode:
+class MainPlanningNode(Node):
     def __init__(self):
-        rospy.init_node('main_planning_node', anonymous=True)
-        self.pub = rospy.Publisher('/planning/target_joints', JointState, queue_size=10)
-        self.sub = rospy.Subscriber('/teleop/keyboard_cmd', String, self.cmd_callback)
+        super().__init__('main_planning_node')
+        self.pub = self.create_publisher(JointState, '/planning/target_joints', 10)
+        self.sub = self.create_subscription(String, '/teleop/keyboard_cmd', self.cmd_callback, 10)
         
         self.joint_names = [f'joint_{i}' for i in range(1, 16)]
         self.current_positions = [0.0] * 15
         
-        rospy.loginfo("Main Planning Node Initialized. Waiting for commands...")
+        self.get_logger().info("Main Planning Node Initialized. Waiting for commands...")
 
     def cmd_callback(self, msg):
         cmd = msg.data
-        rospy.loginfo(f"Received command: {cmd}, calculating trajectory...")
+        self.get_logger().info(f"Received command: {cmd}, calculating trajectory...")
         
         # Calculate target positions based on command
         if cmd == 'q': # Open
@@ -46,14 +47,21 @@ class MainPlanningNode:
 
     def publish_joints(self):
         js = JointState()
-        js.header.stamp = rospy.Time.now()
+        js.header.stamp = self.get_clock().now().to_msg()
         js.name = self.joint_names
         js.position = self.current_positions
         self.pub.publish(js)
 
-if __name__ == '__main__':
+def main(args=None):
+    rclpy.init(args=args)
+    node = MainPlanningNode()
     try:
-        MainPlanningNode()
-        rospy.spin()
-    except rospy.ROSInterruptException:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
         pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

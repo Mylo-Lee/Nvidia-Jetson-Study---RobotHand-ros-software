@@ -1,6 +1,6 @@
-# 다관절 로봇 손 제어 프레임워크 (ROS 2 Humble)
+# 다관절 로봇 손 제어 프레임워크 (ROS 2 Humble / Jazzy)
 
-본 프로젝트는 실제 하드웨어 장비 없이 가상 환경에서 다관절 로봇 손의 노드 간 통신 무결성 및 관절 제어 파이프라인을 검증하기 위한 ROS 2 Humble 기반 시뮬레이션 프레임워크입니다.
+본 프로젝트는 실제 하드웨어 장비 없이 가상 환경에서 다관절 로봇 손의 노드 간 통신 무결성 및 관절 제어 파이프라인을 검증하기 위한 ROS 2 Humble 및 Jazzy 기반 시뮬레이션 프레임워크입니다.
 
 ---
 
@@ -43,9 +43,11 @@ graph TD
 ## 2. 빌드 및 실행 방법
 
 ### 요구 사항
-- **OS**: Ubuntu 22.04 LTS
-- **ROS 버전**: ROS 2 Humble Hawksbill (Desktop 설치 권장)
-- **도구**: Python 3, `colcon` 빌드 시스템
+- **OS**: Ubuntu 24.04 LTS (권장) 또는 Ubuntu 22.04 LTS
+- **ROS 버전**: 
+  - Ubuntu 24.04: **ROS 2 Jazzy Jalisco**
+  - Ubuntu 22.04: **ROS 2 Humble Hawksbill**
+- **도구**: Python 3, `colcon` 빌드 시스템, `cv_bridge` 모듈
 
 ### 빌드 및 실행 순서
 1. ROS 2 워크스페이스 디렉토리로 이동 후 빌드합니다.
@@ -53,16 +55,32 @@ graph TD
    cd ros2_ws
    colcon build --symlink-install
    ```
-2. **[터미널 1]** 환경 변수를 불러오고 ROS 2 런처 실행 (카메라, 플래너, 가상 구동부 동시 구동):
-   ```bash
-   source install/setup.bash
-   ros2 launch dexterous_hand_core dexterous_hand.launch.py
-   ```
+2. **[터미널 1]** ROS 2 전역 환경변수 및 워크스페이스 환경 변수를 불러오고 ROS 2 런처 실행 (카메라, 플래너, 가상 구동부 동시 구동):
+   - **Ubuntu 24.04 (Jazzy)**:
+     ```bash
+     source /opt/ros/jazzy/setup.bash
+     source install/setup.bash
+     ros2 launch dexterous_hand_core dexterous_hand.launch.py
+     ```
+   - **Ubuntu 22.04 (Humble)**:
+     ```bash
+     source /opt/ros/humble/setup.bash
+     source install/setup.bash
+     ros2 launch dexterous_hand_core dexterous_hand.launch.py
+     ```
 3. **[터미널 2]** ROS 2 키보드 제어 노드 실행:
-   ```bash
-   source install/setup.bash
-   ros2 run dexterous_hand_core teleop_input_node
-   ```
+   - **Ubuntu 24.04 (Jazzy)**:
+     ```bash
+     source /opt/ros/jazzy/setup.bash
+     source install/setup.bash
+     ros2 run dexterous_hand_core teleop_input_node
+     ```
+   - **Ubuntu 22.04 (Humble)**:
+     ```bash
+     source /opt/ros/humble/setup.bash
+     source install/setup.bash
+     ros2 run dexterous_hand_core teleop_input_node
+     ```
 4. **[터미널 3] (선택 사항)** ROS 2 이미지 뷰어 실행:
    ```bash
    ros2 run rqt_image_view rqt_image_view
