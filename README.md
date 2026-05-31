@@ -100,3 +100,20 @@ graph TD
 | **r** | **Point** | 검지(3번) 및 기타 일부 관절만 피고 나머지 주먹(가리키기) |
 | **s** | **Stop / Reset** | 모든 제어 신호 초기화 및 리셋 |
 | **CTRL-C** | **Quit** | 프로그램 종료 |
+
+---
+
+## 4. 트러블슈팅 (Troubleshooting)
+
+### 노드를 실행할 때 `not found in libexec` 또는 `No executable found` 에러가 발생하는 경우
+윈도우 환경에서 소스코드를 수정/복사하여 리눅스로 이동하는 등의 과정에서 파이썬 노드 파일들의 실행 권한(`chmod +x`)이 상실되었을 수 있습니다. 아래 명령어로 실행 권한을 복구한 뒤 다시 빌드해 주시기 바랍니다.
+
+```bash
+# 실행 권한 부여
+chmod +x ros2_ws/src/dexterous_hand_core/scripts/*
+
+# 워크스페이스 재빌드
+cd ros2_ws
+colcon build --symlink-install
+```
+
